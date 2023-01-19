@@ -24,6 +24,8 @@ export class FileController {
     });
   }
 
-  @Post('sync')
-  async synchronizeMediaFiles() {}
+  @Get('signedUrl')
+  async generateSignedUrl(@Body() fileUploadDto: Partial<FileUploadDto>) {
+    return this.fileService.generateUploadSignedUrl(fileUploadDto);
+  }
 }
