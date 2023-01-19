@@ -1,0 +1,16 @@
+version: '3'
+services:
+  media-db:
+      image: postgres:14.1-alpine
+      restart: always
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+        - POSTGRES_DB=media-db
+      ports:
+        - '5439:5432'
+      volumes: 
+        - media-db:/var/lib/postgresql/data
+volumes:
+  media-db:
+    driver: local

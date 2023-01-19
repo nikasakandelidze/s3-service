@@ -5,10 +5,10 @@ import { S3 } from 'aws-sdk';
 const EXPIRES = 120;
 
 @Injectable()
-export class AwsProvider {
+export class AwsService {
   private s3: S3;
   private bucketName: string;
-  constructor(private configService: ConfigService) {
+  constructor(configService: ConfigService) {
     const AWS_SECRET_KEY = configService.get<string>('AWS_SECRET_KEY');
     const AWS_ACCESS_ID = configService.get<string>('AWS_ACCESS_ID');
     const AWS_BUCKET_REGION = configService.get<string>('AWS_BUCKET_REGION');
@@ -20,7 +20,7 @@ export class AwsProvider {
     });
   }
 
-  uploadBlob(title: string, fileType: string, buffer: Buffer) {
+  async uploadBlob(title: string, fileType: string, buffer: Buffer) {
     const s3Params = {
       Bucket: this.bucketName,
       Key: `${title}.${fileType}`,
@@ -35,6 +35,24 @@ export class AwsProvider {
           resolve(data);
         }
       });
+    });
+  }
+
+  async fileWithNameExists(fileName: string) {
+    return new Promise((resolve, reject) => {
+      this.s3.headObject(
+        {
+          Bucket: this.bucketName,
+          Key: fileName,
+        },
+        (err, data) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(data);
+          }
+        },
+      );
     });
   }
 
